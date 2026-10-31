@@ -1,0 +1,95 @@
+/* ══ 375 × 812 phone frame — from the `vercel-sim-prototype` skill ═════════════════════════════
+   One element is the phone: `.device` (or any element with `data-device`). Everything the
+   prototype draws lives inside it.
+     · Desktop browser: a 375 × 812 frame centred on a grey stage, the iteration tab to its
+       left. A window shorter than the frame shrinks it to fit (phone.js sets --frame-k).
+     · Phone / Vercel Sim (Mac, iOS, Android): the frame IS the screen — full-bleed, 375 CSS px
+       wide (the Sims lock the layout to 375 and scale it to the device), 100dvh tall (812 on a
+       13 mini, ~815 on bigger iPhones). No shadow, no stage, no iteration tab (the Sims draw
+       their own from it).
+   phone.js adds html.is-phone / html.in-sim / html.is-desktop before first paint; the media
+   query below is the no-JS fallback.
+
+   Per project, override on :root (after this file):
+     --frame-w / --frame-h   the design frame (default 375 × 812, the iPhone 13 mini)
+     --stage                 the desktop background behind the frame
+     --device-bg             the phone's own background (also the page background on a phone)
+     --status-h              your design's status-bar height (default 50px; noon Figma files: 62px)
+   Use in the prototype:
+     --safe-top / --safe-bottom   the notch and home-bar insets: 50 / 34 in the desktop frame
+                                  (13 mini), the device's real env() insets on a phone / Sim
+     --top-inset                  where content starts under the status bar
+                                  = max(--status-h, --safe-top) */
+:root {
+  --frame-w: 375px;
+  --frame-h: 812px;
+  --frame-k: 1;
+  --frame-radius: 0px;
+  --stage: #d8dae0;
+  --device-bg: #fff;
+  --status-h: 50px;
+  --safe-top: 50px;
+  --safe-bottom: 34px;
+  --top-inset: max(var(--status-h), var(--safe-top));
+}
+html.is-phone {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--stage);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+
+.device, [data-device] {
+  position: relative;
+  flex: none;
+  width: var(--frame-w);
+  height: var(--frame-h);
+  overflow: hidden;
+  background: var(--device-bg);
+  border-radius: var(--frame-radius);
+  box-shadow: 0 30px 80px rgba(16, 22, 40, .18), 0 0 0 1px rgba(16, 22, 40, .06);
+  /* a containing block for position:fixed children, so a "fixed" header or sheet sticks to the
+     frame on desktop exactly as it sticks to the screen on a phone */
+  contain: layout paint;
+  isolation: isolate;
+}
+html.is-desktop body { height: 100vh; height: 100dvh; overflow: hidden; }
+html.is-desktop .device, html.is-desktop [data-device] { scale: var(--frame-k); }
+
+/* phone / Vercel Sim: the frame is the screen */
+html.is-phone body { display: block; background: var(--device-bg); overscroll-behavior: none; }
+html.is-phone .device, html.is-phone [data-device] {
+  width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; scale: none;
+}
+@media (max-width: 520px) and (pointer: coarse) {        /* no-JS fallback */
+  body { display: block; background: var(--device-bg); }
+  .device, [data-device] { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+}
+
+/* the usual inner scroller: the page scrolls inside the phone, never the document */
+.device > .scroll, [data-device] > .scroll {
+  position: absolute; inset: 0;
+  overflow-x: hidden; overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.device > .scroll::-webkit-scrollbar, [data-device] > .scroll::-webkit-scrollbar { display: none; }
+
+/* phones: app-like taps — no grey flash, no long-press callout on images */
+html.is-phone * { -webkit-tap-highlight-color: transparent; }
+html.is-phone img { -webkit-touch-callout: none; }
+
+/* a status bar drawn by the prototype (optional, class .sbar). The Vercel Sims hide the
+   system one over prototypes, so the design's own shows there and in the desktop frame; a plain
+   phone browser already shows the real one, so it's hidden there. */
+html.is-phone:not(.in-sim) .sbar { display: none; }
+html.solo .sbar { display: none; }

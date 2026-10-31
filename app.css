@@ -1,0 +1,74 @@
+/* nano Loader — the nano logo floats letter by letter, two sparkles flicker, and thin yellow
+   ripples spread out behind it. Pure CSS motion; react-native/ holds the same loader for React Native.
+   Timings and curves live in react-native/motion.ts too — keep the two in step. */
+
+.loader {
+  position: absolute; inset: 0; overflow: hidden;
+  display: grid; place-items: center; background: #fff;
+}
+
+/* ── logo ─────────────────────────────────────────────────────────────────────────────── */
+.logo { position: relative; z-index: 1; display: block; }
+.border use { fill: #fff; stroke: #fff; stroke-width: 4; stroke-linejoin: round; }
+.extrusion use { fill: #000; }
+
+/* every layer of a letter shares one animation and delay, so the letter moves as one piece;
+   the negative delays start the wave mid-flight, so there is no still first frame */
+.letter {
+  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: float 1.0s cubic-bezier(.37, 0, .63, 1) infinite both;
+}
+.l0 { animation-delay: -1.00s; }
+.l1 { animation-delay: -0.91s; }
+.l2 { animation-delay: -0.82s; }
+.l3 { animation-delay: -0.73s; }
+
+/* a smooth rise, then a subtle elastic settle: one small dip past rest and a faint spring back */
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  30%      { transform: translateY(-7px) scale(.995, 1.012); }
+  54%      { transform: translateY(.56px) scale(1.01, .99); }
+  68%      { transform: translateY(-.35px) scale(1, 1); }
+  80%      { transform: translateY(0) scale(1, 1); }
+}
+
+/* ── stars: each flickers on its own rhythm ──────────────────────────────────────────── */
+.star {
+  transform-box: fill-box; transform-origin: 50% 50%;
+  animation: flicker 1.7s cubic-bezier(.37, 0, .63, 1) infinite both;
+}
+.s1 { animation-duration: 2.3s; animation-delay: -.9s; }
+@keyframes flicker {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  22%      { transform: scale(.55); opacity: .35; }
+  34%      { transform: scale(1.12); opacity: 1; }
+  46%      { transform: scale(.9); opacity: .75; }
+  58%      { transform: scale(1); opacity: 1; }
+  78%      { transform: scale(.8); opacity: .6; }
+}
+
+/* ── ripples ──────────────────────────────────────────────────────────────────────────────
+   Rings are born at 130px radius (clear of the stars), grow linearly so they stay an even 80px
+   apart, and are gone by 330px radius — before the top and bottom of the screen. They grow by
+   width/height, not scale, so the 0.9px line stays 0.9px. */
+.ripples { position: absolute; inset: 0; pointer-events: none; }
+.ring {
+  position: absolute; left: 50%; top: 50%; width: 260px; height: 260px; border-radius: 50%;
+  border: .9px solid rgba(242, 221, 0, .9);
+  transform: translate(-50%, -50%); opacity: 0;
+  animation: ring 5.48s linear infinite;
+}
+.r1 { animation-delay: -1.096s; }
+.r2 { animation-delay: -2.192s; }
+.r3 { animation-delay: -3.288s; }
+.r4 { animation-delay: -4.384s; }
+@keyframes ring {
+  0%   { width: 260px; height: 260px; opacity: 0; }
+  8%   { opacity: .9; }
+  50%  { opacity: 0; }
+  100% { width: 1060px; height: 1060px; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter, .star, .ring { animation-play-state: paused; }
+}
