@@ -1,0 +1,57 @@
+/* ══ Iteration tab (prototype tool, outside the phone) — from the `vercel-sim-prototype` skill ══
+   A white pill to the left of the device frame: 40px circles 8px apart (#EDEDED, digit #0C0C0C),
+   the current iteration #E33C4D with a white digit (700 21px), a hairline, Reset and Spec Sheet
+   (labels on hover, to the left). The finalised iteration carries a green check seal on its
+   corner. It sits 28px left of the frame, vertically centred, and hides when there's no room.
+   It follows phone.css's frame (--frame-w × --frame-k). --vswitch-font = the digits' font
+   (default the project's --noontree, else the system UI font).
+   VERCEL SIM: the Sims find this tab by its class / aria-label and rebuild it natively — but only
+   buttons whose text is a plain number ("3") count as iterations. Never put anything else in a
+   number button's text: marks like the Final seal are drawn with CSS, labels come from data-tip. */
+.vswitch {
+  --vswitch-frame: calc(var(--frame-w, 375px) * var(--frame-k, 1));
+  position: fixed; top: 50%; left: calc(50% - var(--vswitch-frame) / 2 - 28px); transform: translate(-100%, -50%); z-index: 1000;
+  display: flex; flex-direction: column; gap: 8px; padding: 9.5px 6px;
+  background: #fff; border-radius: 999px; box-shadow: 0 4px 18px rgba(20, 24, 40, .08), 0 1px 3px rgba(20, 24, 40, .06);
+}
+.vswitch__b {
+  position: relative; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 0; padding: 0;
+  background: #ededed; color: #0c0c0c; font-family: var(--vswitch-font, var(--noontree, system-ui, -apple-system, 'Segoe UI', sans-serif)); font-weight: 700; font-size: 21px; line-height: 1;
+  cursor: pointer; transition: background-color .22s ease, color .22s ease, transform .18s cubic-bezier(.2, .9, .3, 1.3);
+  -webkit-tap-highlight-color: transparent;
+}
+.vswitch__b:hover { background: #e3e3e3; }
+.vswitch__b:active { transform: scale(.92); }
+.vswitch__b[aria-pressed="true"] { background: #e33c4d; color: #fff; }
+.vswitch__b:focus-visible { outline: 2px solid #e33c4d; outline-offset: 2px; }
+.vswitch__b--final::before {                                  /* the finalised iteration: a green check seal on its corner ("Final" on hover) */
+  content: ''; position: absolute; top: -4px; right: -4px; width: 17px; height: 17px; border-radius: 50%; pointer-events: none;
+  background: #0f8857 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.2l2.2 2.2 4.6-4.8' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px no-repeat;
+  box-shadow: 0 0 0 2px #fff;
+}
+.vswitch__sep { display: block; width: 24px; height: 1px; margin: 2px auto; background: #e3e3e3; }
+/* Reset — restarts the flow on this iteration */
+.vswitch__reset svg { transition: transform .45s cubic-bezier(.2, .9, .3, 1); }
+.vswitch__reset:hover svg { transform: rotate(-35deg); }
+.vswitch__reset.is-spinning svg { transform: rotate(-360deg); transition-duration: .5s; }
+/* Final / Reset / Spec Sheet labels show on hover, to the left */
+.vswitch__tip::after {
+  content: attr(data-tip); position: absolute; right: calc(100% + 12px); top: 50%; transform: translate(4px, -50%);
+  padding: 6px 10px; border-radius: 8px; background: #0c0c0c; color: #fff; font-family: var(--figtree, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  font-size: 13px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease;
+}
+.vswitch__tip:hover::after, .vswitch__tip:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+@media (max-width: 520px) { .vswitch { display: none; } }   /* phone-sized screens: no room beside the frame */
+html.solo .vswitch, html.is-phone .vswitch { display: none; }   /* phones / Sims: the Sim draws its own from this one */
+
+/* this project: a narrow desktop window (e.g. an editor's preview pane) has no room beside the frame,
+   so instead of hiding, the tab becomes a horizontal pill along the bottom. Phones and the Sims keep
+   theirs hidden (html.is-phone), the Sim draws its own. */
+@media (max-width: 620px) {
+  html.is-desktop .vswitch {
+    display: flex; flex-direction: row; top: auto; bottom: 10px; left: 50%; transform: translateX(-50%);
+    padding: 6px 9.5px; border-radius: 999px;
+  }
+  html.is-desktop .vswitch__sep { width: 1px; height: 24px; margin: auto 2px; }
+  html.is-desktop .vswitch__tip::after { right: auto; left: 50%; top: auto; bottom: calc(100% + 10px); transform: translateX(-50%); }
+}

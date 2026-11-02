@@ -1,0 +1,30 @@
+<!doctype html>
+<html data-variant="2" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Rubik Loader · Option 2</title>
+<!-- phone.css / phone.js: the 375 × 812 frame on desktop, full-bleed on phones and in Vercel Sim -->
+<link rel="stylesheet" href="../phone.css">
+<script src="../phone.js"></script>
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="../switcher.css">
+</head>
+<body>
+<main class="device" style="--device-bg:#ffffff">
+  <section class="loader" role="img" aria-label="Loading">
+    <!-- a Rubik's cube that solves itself in a loop — drawn in app.js -->
+    <canvas class="cube" aria-hidden="true"></canvas>
+  </section>
+</main>
+<nav class="vswitch" id="vswitch" aria-label="Design variations">
+  <button class="vswitch__b" data-v="1" aria-pressed="false">1</button>
+  <button class="vswitch__b" data-v="2" aria-pressed="true">2</button>
+  <i class="vswitch__sep" aria-hidden="true"></i>
+  <button class="vswitch__b vswitch__reset vswitch__tip" id="vreset" data-tip="Reset" aria-label="Reset the flow — start again from the top"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3.5 10a6.5 6.5 0 1 0 1.9-4.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3.8 2.8v3.4h3.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+<script src="../switcher.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

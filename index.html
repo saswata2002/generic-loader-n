@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html data-variant="1" lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="phone.css">
 <script src="phone.js"></script>
 <link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="switcher.css">
 </head>
 <body>
 <main class="device" style="--device-bg:#ffffff">
@@ -55,5 +56,12 @@
 
   </section>
 </main>
+<nav class="vswitch" id="vswitch" aria-label="Design variations">
+  <button class="vswitch__b" data-v="1" aria-pressed="true">1</button>
+  <button class="vswitch__b" data-v="2" aria-pressed="false">2</button>
+  <i class="vswitch__sep" aria-hidden="true"></i>
+  <button class="vswitch__b vswitch__reset vswitch__tip" id="vreset" data-tip="Reset" aria-label="Reset the flow — start again from the top"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3.5 10a6.5 6.5 0 1 0 1.9-4.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3.8 2.8v3.4h3.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+<script src="switcher.js"></script>
 </body>
 </html>

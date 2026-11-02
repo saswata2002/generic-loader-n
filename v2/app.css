@@ -1,0 +1,7 @@
+/* Rubik Loader — a Rubik's cube that turns its layers and solves itself, on white. Drawn in app.js. */
+
+.loader {
+  position: absolute; inset: 0; overflow: hidden;
+  display: grid; place-items: center; background: #fff;
+}
+.cube { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
